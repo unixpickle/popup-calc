@@ -1,3 +1,4 @@
-double evaluate_expression(string expr) {
-    return 0.0;
+bool evaluate_expression(string expr, out double result) {
+    result = 0.0;
+    return false;
 }
