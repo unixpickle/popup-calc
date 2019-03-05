@@ -3,13 +3,13 @@ using Gtk;
 class Popup : Window {
     private static int WIDTH = 400;
     private static int ENTRY_HEIGHT = 70;
-    private static int ANSWER_HEIGHT = 30;
+    private static int ANSWER_HEIGHT = 40;
 
     private Entry entry;
     private Label answer;
 
     public Popup() {
-        var container = new Box(VERTICAL, 10);
+        var container = new Box(VERTICAL, 0);
 
         this.entry = new Entry();
         this.entry.set_size_request(WIDTH, ENTRY_HEIGHT);
@@ -50,7 +50,7 @@ class Popup : Window {
         var css = new CssProvider();
         try {
             css.load_from_data("entry { border: none; font-size: 30px; padding: 0 10px; }\n" +
-                "label { padding: 0px 10px; }");
+                "label { padding: 5px 10px; font-size: 20px; }");
         } catch (GLib.Error e) {
             assert(false);
         }
