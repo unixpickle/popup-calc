@@ -15,8 +15,8 @@ string evaluate_expression(string expr) {
                             null);
 
     if (stdout == "") {
-        return stderr;
+        return stderr.strip();
     } else {
-        return stdout;
+        return stdout.strip();
     }
 }

@@ -32,8 +32,11 @@ class Popup : Window {
         this.set_decorated(false);
 
         this.key_press_event.connect((event) => {
+            var mask = accelerator_get_default_mod_mask();
             if (event.keyval == Gdk.Key.Escape) {
                 this.close();
+            } else if (event.keyval == Gdk.Key.c && (event.state & mask) == Gdk.CONTROL_MASK) {
+                this.copy_to_clipboard();
             }
             return false;
         });
@@ -57,5 +60,11 @@ class Popup : Window {
         StyleContext.add_provider_for_screen(screen, css, 600);
 
         this.entry.set_has_frame(false);
+    }
+
+    void copy_to_clipboard() {
+        var clip = Clipboard.get(Gdk.SELECTION_CLIPBOARD);
+        var text = this.answer.get_text();
+        clip.set_text(text, text.length);
     }
 }
