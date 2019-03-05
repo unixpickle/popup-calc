@@ -23,6 +23,14 @@ class Popup : Window {
         this.set_position(CENTER_ALWAYS);
         this.set_keep_above(true);
         this.set_decorated(false);
+
+        this.key_press_event.connect((event) => {
+            if (event.keyval == Gdk.Key.Escape) {
+                this.close();
+            }
+            return false;
+        });
+        this.destroy.connect(main_quit);
     }
 
     void style_entry() {
