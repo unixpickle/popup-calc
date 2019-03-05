@@ -9,14 +9,14 @@ class Popup : Window {
     private Label answer;
 
     public Popup() {
-        var container = new Box(VERTICAL, 5);
+        var container = new Box(VERTICAL, 10);
 
         this.entry = new Entry();
         this.entry.set_size_request(WIDTH, ENTRY_HEIGHT);
         this.style_entry();
         container.add(this.entry);
 
-        this.answer = new Label("invalid expression");
+        this.answer = new Label("");
         this.answer.set_xalign(0);
         container.add(this.answer);
 
@@ -39,12 +39,7 @@ class Popup : Window {
         });
         this.destroy.connect(main_quit);
         this.entry.changed.connect(() => {
-            double solution = 0;
-            if (evaluate_expression(this.entry.get_text(), out solution)) {
-                this.answer.set_text(@"$(solution)");
-            } else {
-                this.answer.set_text("invalid expression");
-            }
+            this.answer.set_text(evaluate_expression(this.entry.get_text()));
         });
     }
 
@@ -52,7 +47,7 @@ class Popup : Window {
         var css = new CssProvider();
         try {
             css.load_from_data("entry { border: none; font-size: 30px; padding: 0 10px; }\n" +
-                "label { padding: 0 10px; }");
+                "label { padding: 0px 10px; }");
         } catch (GLib.Error e) {
             assert(false);
         }
