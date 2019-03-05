@@ -3,7 +3,6 @@ using Gtk;
 class Popup : Window {
     private static int WIDTH = 400;
     private static int ENTRY_HEIGHT = 70;
-    private static int ANSWER_HEIGHT = 40;
 
     private Entry entry;
     private Label answer;
@@ -26,7 +25,6 @@ class Popup : Window {
         this.answer.show();
         container.show();
 
-        this.set_size_request(WIDTH, ENTRY_HEIGHT + ANSWER_HEIGHT);
         this.set_position(CENTER_ALWAYS);
         this.set_keep_above(true);
         this.set_decorated(false);
@@ -50,7 +48,7 @@ class Popup : Window {
         var css = new CssProvider();
         try {
             css.load_from_data("entry { border: none; font-size: 30px; padding: 0 10px; }\n" +
-                "label { padding: 5px 10px; font-size: 20px; }");
+                "label { padding: 5px 10px 7px 10px; font-size: 20px; }");
         } catch (GLib.Error e) {
             assert(false);
         }
