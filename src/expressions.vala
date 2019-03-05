@@ -5,16 +5,20 @@ string evaluate_expression(string expr) {
     string stdout;
     string stderr;
 
-    GLib.Process.spawn_sync("/",
-                            spawn_args,
-                            spawn_env,
-                            GLib.SpawnFlags.SEARCH_PATH,
-                            null,
-                            out stdout,
-                            out stderr,
-                            null);
+    try {
+        GLib.Process.spawn_sync("/",
+                                spawn_args,
+                                spawn_env,
+                                GLib.SpawnFlags.SEARCH_PATH,
+                                null,
+                                out stdout,
+                                out stderr,
+                                null);
+    } catch (GLib.SpawnError error) {
+        return "unable to run `bc` command";
+    }
 
-    if (stdout == "") {
+    if (stderr != "") {
         return stderr.strip();
     } else {
         return stdout.strip();
