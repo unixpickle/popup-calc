@@ -46,7 +46,7 @@ string evaluate_expression(string expr) {
     }
 
     if (stderr != "") {
-        return stderr.strip().replace("(standard_in) 2: ", "");
+        return stderr.strip().replace("(standard_in) 30: ", "");
     } else if (exit_status != 0) {
         return "timeout";
     } else {
