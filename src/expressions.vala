@@ -1,6 +1,5 @@
 string evaluate_expression(string expr) {
-    // TODO: escape the expression. This is a hack.
-    string[] spawn_args = {"bash", "-c", @"echo '$(expr)' | timeout 1s bc -l"};
+    string[] spawn_args = {"bash", "-c", @"echo \"$(expr.escape())\" | timeout 1s bc -l"};
     string[] spawn_env = GLib.Environ.get();
     string stdout;
     string stderr;
