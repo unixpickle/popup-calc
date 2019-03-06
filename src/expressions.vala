@@ -19,7 +19,7 @@ string evaluate_expression(string expr) {
     }
 
     if (stderr != "") {
-        return stderr.strip();
+        return stderr.strip().replace("(standard_in) 2: ", "");
     } else if (exit_status != 0) {
         return "timeout";
     } else {
