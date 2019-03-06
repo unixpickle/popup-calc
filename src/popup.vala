@@ -21,10 +21,6 @@ class Popup : Window {
 
         this.add(container);
 
-        this.entry.show();
-        this.answer.show();
-        container.show();
-
         this.set_position(CENTER_ALWAYS);
         this.set_keep_above(true);
         this.set_decorated(false);
