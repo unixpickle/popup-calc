@@ -30,21 +30,17 @@ define pow(x, y) {
 
 string evaluate_expression(string expr) {
     var extended_expr = (STANDARD_DEFS + expr).escape("\n");
-    string[] spawn_args = {"bash", "-c", @"echo \"$(extended_expr)\" | timeout 1s bc -l"};
-    string[] spawn_env = GLib.Environ.get();
+    var script = @"echo \"$(extended_expr)\" | timeout 1s bc -l".escape("\n");
+    string command = @"bash -c \"$(script)\"";
     string stdout;
     string stderr;
     int exit_status;
 
     try {
-        GLib.Process.spawn_sync("/",
-                                spawn_args,
-                                spawn_env,
-                                GLib.SpawnFlags.SEARCH_PATH,
-                                null,
-                                out stdout,
-                                out stderr,
-                                out exit_status);
+        GLib.Process.spawn_command_line_sync(command,
+                                             out stdout,
+                                             out stderr,
+                                             out exit_status);
     } catch (GLib.SpawnError error) {
         return "unable to run `bc` command";
     }
