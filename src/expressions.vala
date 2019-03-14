@@ -50,6 +50,13 @@ string evaluate_expression(string expr) {
     } else if (exit_status != 0) {
         return "timeout";
     } else {
-        return stdout.strip();
+        var result = stdout.strip();
+        while (result.contains(".") && result.has_suffix("0")) {
+            result = result[0:-1];
+        }
+        if (result.has_suffix(".")) {
+            result = result[0:-1];
+        }
+        return result;
     }
 }
