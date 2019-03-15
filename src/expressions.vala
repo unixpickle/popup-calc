@@ -46,7 +46,13 @@ string evaluate_expression(string expr) {
     }
 
     if (stderr != "") {
-        return stderr.strip().replace("(standard_in) 30: ", "");
+        try {
+            var err_prefix = new Regex("\\(standard_in\\) [0-9]*: ");
+            var result = stderr.strip();
+            return err_prefix.replace(result, result.length, 0, "");
+        } catch (RegexError error) {
+            return @"regex error: $(error.message)";
+        }
     } else if (exit_status != 0) {
         return "timeout";
     } else {
