@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=Popup Calc
+Icon=/home/USERNAME/.local/share/icons/hicolor/48x48/apps/popup_calc.svg
+StartupNotify=true
+Exec=/home/USERNAME/.local/share/popup_calc/popup_calc
