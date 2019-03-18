@@ -16,14 +16,14 @@ class Popup : Window {
         container.add(this.entry);
 
         this.answer = new Label("");
-        this.answer.set_xalign(0);
+        this.answer.xalign = 0;
         container.add(this.answer);
 
         this.add(container);
 
         this.set_position(CENTER_ALWAYS);
         this.set_keep_above(true);
-        this.set_decorated(false);
+        this.decorated = false;
 
         this.key_press_event.connect((event) => {
             var mask = accelerator_get_default_mod_mask();
@@ -36,7 +36,7 @@ class Popup : Window {
         });
         this.destroy.connect(main_quit);
         this.entry.changed.connect(() => {
-            this.answer.set_text(evaluate_expression(this.entry.get_text()));
+            this.answer.set_text(evaluate_expression(this.entry.text));
         });
     }
 
@@ -53,7 +53,7 @@ class Popup : Window {
         var screen = display.get_default_screen();
         StyleContext.add_provider_for_screen(screen, css, 600);
 
-        this.entry.set_has_frame(false);
+        this.entry.has_frame = false;
     }
 
     void copy_to_clipboard() {
