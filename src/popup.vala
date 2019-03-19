@@ -7,6 +7,8 @@ class Popup : Window {
     private Entry entry;
     private Label answer;
 
+    private AsyncDict dict;
+
     public Popup() {
         var container = new Box(VERTICAL, 0);
 
@@ -40,6 +42,17 @@ class Popup : Window {
                 this.resize(10, 10);
             }
             this.answer.set_text(evaluate_expression(this.entry.text));
+
+            if (Regex.match_simple("^[a-z ]*$", this.entry.text) && this.answer.get_text() == "0") {
+                this.dict.lookup_term(this.entry.text);
+            }
+        });
+
+        this.dict = new AsyncDict();
+        this.dict.defined.connect((term, definition) => {
+            if (term == this.entry.text) {
+                this.answer.set_text(definition);
+            }
         });
     }
 

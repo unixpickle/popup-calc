@@ -1,3 +1,63 @@
+class AsyncDict : Object {
+    private Mutex mutex;
+    private Cond cond;
+    private string? term;
+
+    public signal void defined(string term, string definition);
+
+    public AsyncDict() {
+        this.mutex = Mutex();
+        this.cond = Cond();
+        new Thread<bool>("dict", this.loop);
+    }
+
+    public void lookup_term(string term) {
+        this.mutex.lock();
+        this.term = term;
+        this.cond.broadcast();
+        this.mutex.unlock();
+    }
+
+    private bool loop() {
+        while (true) {
+            this.mutex.lock();
+            if (this.term != null) {
+                var term = this.term;
+                this.term = null;
+                this.mutex.unlock();
+                try {
+                    this.define(term);
+                } catch (Error e) {
+                }
+            } else {
+                this.cond.wait(this.mutex);
+                this.mutex.unlock();
+            }
+        }
+    }
+
+    private void define(string term) throws Error {
+        var client = new DictClient("dict.org", 2628);
+        var definition = client.define(term);
+        if (definition == null) {
+            var matches = client.match(term);
+            if (matches.length == 0) {
+                return;
+            }
+            definition = client.define(matches[0]);
+            if (definition == null) {
+                return;
+            }
+        }
+        var ev = new IdleSource();
+        ev.set_callback(() => {
+            this.defined(term, definition);
+            return Source.REMOVE;
+        });
+        ev.attach(MainContext.default());
+    }
+}
+
 class DictClient : Object {
     public static int ERROR_HOSTNAME = 0;
     public static int ERROR_FIRST_LINE = 1;
