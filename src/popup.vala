@@ -36,7 +36,9 @@ class Popup : Window {
         });
         this.destroy.connect(main_quit);
         this.entry.changed.connect(() => {
-            this.resize(10, 10);
+            if (this.entry.text == "") {
+                this.resize(10, 10);
+            }
             this.answer.set_text(evaluate_expression(this.entry.text));
         });
     }
