@@ -37,11 +37,11 @@ string evaluate_expression(string expr) {
     int exit_status;
 
     try {
-        GLib.Process.spawn_command_line_sync(command,
-                                             out stdout,
-                                             out stderr,
-                                             out exit_status);
-    } catch (GLib.SpawnError error) {
+        Process.spawn_command_line_sync(command,
+                                        out stdout,
+                                        out stderr,
+                                        out exit_status);
+    } catch (SpawnError error) {
         return "unable to run `bc` command";
     }
 

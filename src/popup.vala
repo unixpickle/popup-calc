@@ -48,7 +48,7 @@ class Popup : Window {
         try {
             css.load_from_data("entry { border: none; font-size: 30px; padding: 0 10px; }\n" +
                 "label { padding: 5px 10px 7px 10px; font-size: 20px; }");
-        } catch (GLib.Error e) {
+        } catch (Error e) {
             assert(false);
         }
 
