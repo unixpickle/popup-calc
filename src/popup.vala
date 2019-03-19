@@ -43,7 +43,7 @@ class Popup : Window {
             }
             this.answer.set_text(evaluate_expression(this.entry.text));
 
-            if (Regex.match_simple("^[a-z ]*$", this.entry.text) && this.answer.get_text() == "0") {
+            if (Regex.match_simple("^[a-z ]+$", this.entry.text) && this.answer.get_text() == "0") {
                 this.dict.lookup_term(this.entry.text);
             }
         });

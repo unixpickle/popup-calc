@@ -87,7 +87,7 @@ class DictClient : Object {
     public string[] match(string query) throws Error {
         this.write_line(@"MATCH wn lev \"$(query)\"");
         var result = new string[0];
-        var response = this.read_line().split(" ")[0];
+        var response = this.read_status();
         if (response != "152") {
             return result;
         }
@@ -100,7 +100,7 @@ class DictClient : Object {
                 result += line[4:-1];
             }
         }
-        response = this.read_line().split(" ")[0];
+        response = this.read_status();
         if (response != "250") {
             throw new Error(Quark.from_string("DictClient"), ERROR_BAD_RESPONSE,
                 "expected code 250 but got: " + response);
@@ -110,14 +110,14 @@ class DictClient : Object {
 
     public string? define(string query) throws Error {
         this.write_line(@"DEFINE wn \"$(query)\"");
-        var response = this.read_line().split(" ")[0];
+        var response = this.read_status();
         if (response == "552") {
             return null;
         } else if (response != "150") {
             throw new Error(Quark.from_string("DictClient"), ERROR_BAD_RESPONSE,
                 "expected code 150 but got: " + response);
         }
-        response = this.read_line().split(" ")[0];
+        response = this.read_status();
         if (response != "151") {
             throw new Error(Quark.from_string("DictClient"), ERROR_BAD_RESPONSE,
                 "expected code 151 but got: " + response);
@@ -133,7 +133,7 @@ class DictClient : Object {
             }
             definition += line;
         }
-        response = this.read_line().split(" ")[0];
+        response = this.read_status();
         if (response != "250") {
             throw new Error(Quark.from_string("DictClient"), ERROR_BAD_RESPONSE,
                 "expected code 250 but got: " + response);
@@ -147,6 +147,10 @@ class DictClient : Object {
             var sent = this.socket.send(data);
             data = data[sent:data.length];
         }
+    }
+
+    private string read_status() throws Error {
+        return this.read_line().split(" ")[0];
     }
 
     private string read_line() throws Error {
