@@ -29,8 +29,8 @@ define pow(x, y) {
 """;
 
 string evaluate_expression(string expr) {
-    var extended_expr = (STANDARD_DEFS + expr).escape("\n");
-    var script = @"echo \"$(extended_expr)\" | timeout 1s bc -l".escape("\n");
+    var extended_expr = shell_escape(STANDARD_DEFS + expr);
+    var script = shell_escape(@"echo \"$(extended_expr)\" | timeout 1s bc -l");
     string command = @"bash -c \"$(script)\"";
     string stdout;
     string stderr;
@@ -65,4 +65,11 @@ string evaluate_expression(string expr) {
         }
         return result;
     }
+}
+
+string shell_escape(string s) {
+    var res = s.escape("\n");
+    res = res.replace("`", "\\`");
+    res = res.replace("$", "\\$");
+    return res;
 }
