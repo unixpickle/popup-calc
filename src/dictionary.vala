@@ -4,6 +4,7 @@ class AsyncDict : Object {
     private string? term;
 
     public signal void defined(string term, string definition);
+    public signal void failed(string term, string error);
 
     public AsyncDict() {
         this.mutex = Mutex();
@@ -26,8 +27,10 @@ class AsyncDict : Object {
                 this.term = null;
                 this.mutex.unlock();
                 try {
-                    this.define(term);
+                    var definition = this.define(term);
+                    this.emit_async(term, definition, null);
                 } catch (Error e) {
+                    this.emit_async(term, null, e.message);
                 }
             } else {
                 this.cond.wait(this.mutex);
@@ -36,22 +39,30 @@ class AsyncDict : Object {
         }
     }
 
-    private void define(string term) throws Error {
+    private string? define(string term) throws Error {
         var client = new DictClient("dict.org", 2628);
         var definition = client.define(term);
         if (definition == null) {
             var matches = client.match(term);
-            if (matches.length == 0) {
-                return;
-            }
-            definition = client.define(matches[0]);
-            if (definition == null) {
-                return;
+            if (matches.length > 0) {
+                definition = client.define(matches[0]);
             }
         }
+        return definition;
+    }
+
+    private void emit_async(string term, string? definition, string? error) {
         var ev = new IdleSource();
         ev.set_callback(() => {
-            this.defined(term, definition);
+            if (error == null) {
+                if (definition == null) {
+                    this.failed(term, "no definition found");
+                } else {
+                    this.defined(term, definition);
+                }
+            } else {
+                this.failed(term, error);
+            }
             return Source.REMOVE;
         });
         ev.attach(MainContext.default());

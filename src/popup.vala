@@ -41,10 +41,12 @@ class Popup : Window {
             if (this.entry.text == "") {
                 this.resize(10, 10);
             }
-            this.answer.set_text(evaluate_expression(this.entry.text));
-
-            if (Regex.match_simple("^[a-z ]+$", this.entry.text) && this.answer.get_text() == "0") {
+            var eval_result = evaluate_expression(this.entry.text);
+            if (Regex.match_simple("^[a-z ]+$", this.entry.text) && eval_result == "0") {
+                this.answer.set_text("searching definition...");
                 this.dict.lookup_term(this.entry.text);
+            } else {
+                this.answer.set_text(eval_result);
             }
         });
 
@@ -52,6 +54,11 @@ class Popup : Window {
         this.dict.defined.connect((term, definition) => {
             if (term == this.entry.text) {
                 this.answer.set_text(definition);
+            }
+        });
+        this.dict.failed.connect((term, message) => {
+            if (term == this.entry.text) {
+                this.answer.set_text(message);
             }
         });
     }
