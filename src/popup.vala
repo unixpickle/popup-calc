@@ -2,7 +2,6 @@ using Gtk;
 
 class Popup : Window {
     private static int WIDTH = 400;
-    private static int ENTRY_HEIGHT = 70;
 
     private Entry entry;
     private Label answer;
@@ -13,12 +12,18 @@ class Popup : Window {
         var container = new Box(Orientation.VERTICAL, 0);
 
         this.entry = new Entry();
-        this.entry.set_size_request(WIDTH, ENTRY_HEIGHT);
+        this.entry.set_size_request(WIDTH, 0);
+        var attributes = new Pango.AttrList();
+        attributes.change(new Pango.AttrSize(24 * Pango.SCALE));
+        this.entry.attributes = attributes;
         this.style_entry();
         container.add(this.entry);
 
         this.answer = new Label("");
         this.answer.xalign = 0;
+        attributes = new Pango.AttrList();
+        attributes.change(new Pango.AttrSize(16 * Pango.SCALE));
+        this.answer.attributes = attributes;
         container.add(this.answer);
 
         this.add(container);
@@ -66,8 +71,8 @@ class Popup : Window {
     void style_entry() {
         var css = new CssProvider();
         try {
-            var data = "entry { border: none; font-size: 30px; padding: 0 10px; }\n" +
-                "label { padding: 5px 10px 7px 10px; font-size: 20px; }";
+            var data = "entry { border: none; padding: 13px 10px; }\n" +
+                "label { padding: 5px 10px 7px 10px; }";
             css.load_from_data(data, data.length);
         } catch (Error e) {
             assert(false);
@@ -75,7 +80,7 @@ class Popup : Window {
 
         var display = Gdk.Display.get_default();
         var screen = display.get_default_screen();
-        StyleContext.add_provider_for_screen(screen, css, 600);
+        StyleContext.add_provider_for_screen(screen, css, Gtk.STYLE_PROVIDER_PRIORITY_USER);
 
         this.entry.has_frame = false;
     }
