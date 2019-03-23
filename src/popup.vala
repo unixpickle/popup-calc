@@ -2,7 +2,6 @@ using Gtk;
 
 class Popup : Window {
     private static int WIDTH = 400;
-    private static int ENTRY_HEIGHT = 70;
 
     private Entry entry;
     private Label answer;
@@ -13,7 +12,7 @@ class Popup : Window {
         var container = new Box(Orientation.VERTICAL, 0);
 
         this.entry = new Entry();
-        this.entry.set_size_request(WIDTH, ENTRY_HEIGHT);
+        this.entry.set_size_request(WIDTH, 0);
         this.style_entry();
         container.add(this.entry);
 
@@ -66,8 +65,8 @@ class Popup : Window {
     void style_entry() {
         var css = new CssProvider();
         try {
-            var data = "GtkEntry, entry { border: none; font-size: 30px; padding: 0 10px; }\n" +
-                "GtkLabel, label { padding: 5px 10px 7px 10px; font-size: 20px; }";
+            var data = "GtkEntry, entry { border: none; font-size: 30px; padding: 15px 10px; }\n" +
+                "GtkLabel, label { padding: 10px 10px 10px 10px; font-size: 20px; }";
             css.load_from_data(data, data.length);
         } catch (Error e) {
             assert(false);
