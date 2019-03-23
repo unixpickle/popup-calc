@@ -66,8 +66,8 @@ class Popup : Window {
     void style_entry() {
         var css = new CssProvider();
         try {
-            var data = "entry { border: none; font-size: 30px; padding: 0 10px; }\n" +
-                "label { padding: 5px 10px 7px 10px; font-size: 20px; }";
+            var data = "GtkEntry, entry { border: none; font-size: 30px; padding: 0 10px; }\n" +
+                "GtkLabel, label { padding: 5px 10px 7px 10px; font-size: 20px; }";
             css.load_from_data(data, data.length);
         } catch (Error e) {
             assert(false);
