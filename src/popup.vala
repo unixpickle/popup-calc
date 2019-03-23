@@ -10,7 +10,7 @@ class Popup : Window {
     private AsyncDict dict;
 
     public Popup() {
-        var container = new Box(VERTICAL, 0);
+        var container = new Box(Orientation.VERTICAL, 0);
 
         this.entry = new Entry();
         this.entry.set_size_request(WIDTH, ENTRY_HEIGHT);
@@ -23,7 +23,7 @@ class Popup : Window {
 
         this.add(container);
 
-        this.set_position(CENTER_ALWAYS);
+        this.set_position(WindowPosition.CENTER_ALWAYS);
         this.set_keep_above(true);
         this.decorated = false;
 
@@ -31,7 +31,7 @@ class Popup : Window {
             var mask = accelerator_get_default_mod_mask();
             if (event.keyval == Gdk.Key.Escape) {
                 this.close();
-            } else if (event.keyval == Gdk.Key.c && (event.state & mask) == Gdk.CONTROL_MASK) {
+            } else if (event.keyval == Gdk.Key.c && (event.state & mask) == Gdk.ModifierType.CONTROL_MASK) {
                 this.copy_to_clipboard();
             }
             return false;
@@ -66,8 +66,9 @@ class Popup : Window {
     void style_entry() {
         var css = new CssProvider();
         try {
-            css.load_from_data("entry { border: none; font-size: 30px; padding: 0 10px; }\n" +
-                "label { padding: 5px 10px 7px 10px; font-size: 20px; }");
+            var data = "entry { border: none; font-size: 30px; padding: 0 10px; }\n" +
+                "label { padding: 5px 10px 7px 10px; font-size: 20px; }";
+            css.load_from_data(data, data.length);
         } catch (Error e) {
             assert(false);
         }

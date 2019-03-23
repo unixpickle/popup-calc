@@ -63,7 +63,7 @@ class AsyncDict : Object {
             } else {
                 this.failed(term, error);
             }
-            return Source.REMOVE;
+            return false;
         });
         ev.attach(MainContext.default());
     }
@@ -82,10 +82,10 @@ class DictClient : Object {
         if (ent == null) {
             throw new Error(Quark.from_string("DictClient"), ERROR_HOSTNAME, "no hostname found");
         }
-        InetAddress addr = new InetAddress.from_bytes(ent.h_addr_list[0].data, IPV4);
+        InetAddress addr = new InetAddress.from_bytes(ent.h_addr_list[0].data, SocketFamily.IPV4);
         InetSocketAddress sockaddr = new InetSocketAddress(addr, port);
 
-        this.socket = new Socket(IPV4, STREAM, TCP);
+        this.socket = new Socket(SocketFamily.IPV4, SocketType.STREAM, SocketProtocol.TCP);
         this.socket.connect(sockaddr);
 
         string line = this.read_line();

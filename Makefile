@@ -1,6 +1,6 @@
 build/popup_calc: src/expressions.vala src/main.vala src/popup.vala src/dictionary.vala
 	mkdir -p build
-	valac --pkg gtk+-3.0 --pkg posix src/*.vala -o build/popup_calc
+	valac --pkg gtk+-3.0 --pkg posix --target-glib=2.32 src/*.vala -o build/popup_calc
 
 install: build/popup_calc
 	mkdir -p ~/.local/share/popup_calc
