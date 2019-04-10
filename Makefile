@@ -6,6 +6,7 @@ install: build/popup_calc
 	mkdir -p ~/.local/share/popup_calc
 	cp build/popup_calc ~/.local/share/popup_calc
 	cat popup_calc.desktop | sed -E "s/USERNAME/${USER}/g" > ~/.local/share/applications/popup_calc.desktop
+	mkdir -p ~/.local/share/icons/hicolor/48x48/apps/
 	cp popup_calc.svg ~/.local/share/icons/hicolor/48x48/apps/
 	chmod +x ~/.local/share/applications/popup_calc.desktop
 
