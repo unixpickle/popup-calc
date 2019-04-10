@@ -25,11 +25,17 @@ class Popup : Window {
         this.set_position(WindowPosition.CENTER_ALWAYS);
         this.set_keep_above(true);
         this.decorated = false;
-
+        
         this.key_press_event.connect((event) => {
             var mask = accelerator_get_default_mod_mask();
             if (event.keyval == Gdk.Key.Escape) {
-                this.close();
+                if (this.entry.text != "") {
+                    this.answer.set_text("");
+                    this.entry.set_text("");
+                    this.resize(10, 10);
+                } else {
+                    this.close();
+                }
             } else if (event.keyval == Gdk.Key.c && (event.state & mask) == Gdk.ModifierType.CONTROL_MASK) {
                 this.copy_to_clipboard();
             }
