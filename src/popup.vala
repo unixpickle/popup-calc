@@ -32,7 +32,7 @@ class Popup : Window {
                 if (this.entry.text != "") {
                     this.answer.set_text("");
                     this.entry.set_text("");
-                    this.resize(10, 10);
+                    this.auto_shrink();
                 } else {
                     this.close();
                 }
@@ -44,7 +44,7 @@ class Popup : Window {
         this.destroy.connect(main_quit);
         this.entry.changed.connect(() => {
             if (this.entry.text == "") {
-                this.resize(10, 10);
+                this.auto_shrink();
             }
             var eval_result = evaluate_expression(this.entry.text);
             if (Regex.match_simple("^[a-z ]+$", this.entry.text) && eval_result == "0") {
@@ -95,5 +95,9 @@ class Popup : Window {
         var clip = Clipboard.get(Gdk.SELECTION_CLIPBOARD);
         var text = this.answer.get_text();
         clip.set_text(text, text.length);
+    }
+
+    void auto_shrink() {
+        this.resize(10, 10);
     }
 }
