@@ -25,7 +25,7 @@ class Popup : Window {
         this.set_position(WindowPosition.CENTER_ALWAYS);
         this.set_keep_above(true);
         this.decorated = false;
-        
+
         this.key_press_event.connect((event) => {
             var mask = accelerator_get_default_mod_mask();
             if (event.keyval == Gdk.Key.Escape) {
@@ -71,8 +71,14 @@ class Popup : Window {
     void style_entry() {
         var css = new CssProvider();
         try {
-            var data = "GtkEntry, entry { border: none; font-size: 30px; padding: 15px 10px; }\n" +
-                "GtkLabel, label { padding: 10px 10px 10px 10px; font-size: 20px; }";
+            var data = """
+                GtkEntry, entry {
+                    border: none; font-size: 30px; padding: 15px 10px; box-shadow: none;
+                }
+                GtkLabel, label {
+                    padding: 10px 10px 10px 10px; font-size: 20px; background: #f0f0f0;
+                }
+            """;
             css.load_from_data(data, data.length);
         } catch (Error e) {
             assert(false);
