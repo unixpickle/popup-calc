@@ -22,7 +22,7 @@ class Popup : Window {
 
         this.add(container);
 
-        this.set_position(WindowPosition.CENTER_ALWAYS);
+        this.set_position(WindowPosition.CENTER);
         this.set_keep_above(true);
         this.decorated = false;
 
