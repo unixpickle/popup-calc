@@ -76,7 +76,7 @@ class Popup : Window {
                     border: none; font-size: 30px; padding: 15px 10px; box-shadow: none;
                 }
                 GtkLabel, label {
-                    padding: 10px 10px 10px 10px; font-size: 20px; background: #f0f0f0;
+                    padding: 10px 10px 10px 10px; font-size: 20px;
                 }
             """;
             css.load_from_data(data, data.length);
