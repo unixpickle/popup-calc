@@ -1,4 +1,4 @@
-void main(string[] args) {
+int main(string[] args) {
     bool gnome_center = false;
     var entry = OptionEntry();
     entry.long_name = "gnome-center";
@@ -23,4 +23,5 @@ void main(string[] args) {
     Gtk.init(ref args);
     new Popup(gnome_center).show_all();
     Gtk.main();
+    return 0;
 }

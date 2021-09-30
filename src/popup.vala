@@ -1,5 +1,4 @@
 using Gtk;
-using Gio;
 
 class Popup : Window {
     private static int WIDTH = 400;
@@ -111,14 +110,14 @@ class Popup : Window {
     }
 
     void center_with_gnome() {
-        timeout_add(250, () => {
+        Timeout.add(250, () => {
             var proxy = new DBusProxy.for_bus_sync(
                 BusType.SESSION,
                 DBusProxyFlags.NONE,
                 null,
                 "org.gnome.Shell",
                 "/org/gnome/Shell",
-                "org.gnome.Shell",
+                "org.gnome.Shell"
             );
             var code = """
             (function(pid) {
@@ -137,7 +136,7 @@ class Popup : Window {
                     }
                 }
                 return num_moved;
-            })""" + @"$(getpid())";
+            })""" + @"$((int)Posix.getpid())";
             var result = proxy.call_sync("Eval", code, DBusCallFlags.NO_AUTO_START, 1000);
 
             // TODO: check if the window was moved and return true
