@@ -7,8 +7,11 @@ class Popup : Window {
     private Label answer;
 
     private AsyncDict dict;
+    private bool gnome_center;
 
-    public Popup() {
+    public Popup(bool gnome_center) {
+        this.gnome_center = gnome_center;
+
         var container = new Box(Orientation.VERTICAL, 0);
 
         this.entry = new Entry();
@@ -26,6 +29,11 @@ class Popup : Window {
         this.set_keep_above(true);
         this.decorated = false;
 
+        this.show.connect((event) => {
+            if (this.gnome_center) {
+                this.center_with_gnome();
+            }
+        });
         this.key_press_event.connect((event) => {
             var mask = accelerator_get_default_mod_mask();
             if (event.keyval == Gdk.Key.Escape) {
@@ -99,5 +107,60 @@ class Popup : Window {
 
     void auto_shrink() {
         this.resize(10, 10);
+    }
+
+    void center_with_gnome() {
+        Timeout.add(250, () => {
+            DBusProxy proxy;
+            try {
+                proxy = new DBusProxy.for_bus_sync(
+                    BusType.SESSION,
+                    DBusProxyFlags.NONE,
+                    null,
+                    "org.gnome.Shell",
+                    "/org/gnome/Shell",
+                    "org.gnome.Shell"
+                );
+            } catch (Error e) {
+                print(@"failed to connect to GNOME shell: $(e.message)");
+                return false;
+            }
+            var code = """
+            (function(pid) {
+                let num_moved = 0;
+                const actors = global.get_window_actors();
+                for (let i = 0; i < actors.length; i++) {
+                    const window = actors[i].get_meta_window();
+                    if (window.get_pid() == pid) {
+                        const display = window.get_display();
+                        const [dw, dh] = display.get_size();
+                        const frame = window.get_frame_rect();
+                        const x = (dw - frame.width) / 2;
+                        const y = (dh - frame.height) / 2;
+                        window.move_frame(0, x, y);
+                        num_moved += 1;
+                    }
+                }
+                return num_moved;
+            })""" + @"($((int)Posix.getpid()))";
+            var dbus_args = new Variant.tuple({new Variant.string(code)});
+            Variant ret_val;
+            try {
+                ret_val = proxy.call_sync("Eval", dbus_args, DBusCallFlags.NO_AUTO_START, 1000);
+            } catch (Error e) {
+                print(@"failed to connect to GNOME shell: $(e.message)");
+                return false;
+            }
+            bool status = false;
+            string json_out = "";
+            ret_val.get("(bs)", &status, &json_out);
+
+            if (status && json_out == "0") {
+                // The window isn't registered yet.
+                return true;
+            }
+
+            return false;
+        });
     }
 }
