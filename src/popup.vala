@@ -153,7 +153,7 @@ class Popup : Window {
             }
             bool status = false;
             string json_out = "";
-            ret_val.get("(bs)", ref status, ref json_out);
+            ret_val.get("(bs)", &status, &json_out);
 
             if (status && json_out == "0") {
                 // The window isn't registered yet.
