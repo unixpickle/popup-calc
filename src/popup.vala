@@ -157,10 +157,10 @@ class Popup : Window {
 
             if (status && json_out == "0") {
                 // The window isn't registered yet.
-                return false;
+                return true;
             }
 
-            return true;
+            return false;
         });
     }
 }
