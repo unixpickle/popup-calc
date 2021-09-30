@@ -1,4 +1,5 @@
 using Gtk;
+using Gio;
 
 class Popup : Window {
     private static int WIDTH = 400;
@@ -99,5 +100,35 @@ class Popup : Window {
 
     void auto_shrink() {
         this.resize(10, 10);
+    }
+
+    void gnome_center() {
+        var proxy = new DBusProxy.for_bus_sync(
+            BusType.SESSION,
+            DBusProxyFlags.NONE,
+            null,
+            "org.gnome.Shell",
+            "/org/gnome/Shell",
+            "org.gnome.Shell",
+        );
+        var code = """
+        (function(pid) {
+            let num_moved = 0;
+            const actors = global.get_window_actors();
+            for (let i = 0; i < actors.length; i++) {
+                const window = actors[i].get_meta_window();
+                if (window.get_pid() == pid) {
+                    const display = window.get_display();
+                    const [dw, dh] = display.get_size();
+                    const frame = window.get_frame_rect();
+                    const x = (dw - frame.width) / 2;
+                    const y = (dh - frame.height) / 2;
+                    window.move_frame(0, x, y);
+                    num_moved += 1;
+                }
+            }
+            return num_moved;
+        })""" + @"(pid)";
+        var result = proxy.call_sync("Eval", code, DBusCallFlags.NO_AUTO_START, 1000);
     }
 }
