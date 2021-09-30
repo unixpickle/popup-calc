@@ -8,8 +8,11 @@ class Popup : Window {
     private Label answer;
 
     private AsyncDict dict;
+    private bool gnome_center;
 
-    public Popup() {
+    public Popup(bool gnome_center) {
+        this.gnome_center = gnome_center;
+
         var container = new Box(Orientation.VERTICAL, 0);
 
         this.entry = new Entry();
@@ -27,6 +30,11 @@ class Popup : Window {
         this.set_keep_above(true);
         this.decorated = false;
 
+        this.show.connect((event) => {
+            if (this.gnome_center) {
+                this.center_with_gnome();
+            }
+        });
         this.key_press_event.connect((event) => {
             var mask = accelerator_get_default_mod_mask();
             if (event.keyval == Gdk.Key.Escape) {
@@ -102,33 +110,39 @@ class Popup : Window {
         this.resize(10, 10);
     }
 
-    void gnome_center() {
-        var proxy = new DBusProxy.for_bus_sync(
-            BusType.SESSION,
-            DBusProxyFlags.NONE,
-            null,
-            "org.gnome.Shell",
-            "/org/gnome/Shell",
-            "org.gnome.Shell",
-        );
-        var code = """
-        (function(pid) {
-            let num_moved = 0;
-            const actors = global.get_window_actors();
-            for (let i = 0; i < actors.length; i++) {
-                const window = actors[i].get_meta_window();
-                if (window.get_pid() == pid) {
-                    const display = window.get_display();
-                    const [dw, dh] = display.get_size();
-                    const frame = window.get_frame_rect();
-                    const x = (dw - frame.width) / 2;
-                    const y = (dh - frame.height) / 2;
-                    window.move_frame(0, x, y);
-                    num_moved += 1;
+    void center_with_gnome() {
+        timeout_add(250, () => {
+            var proxy = new DBusProxy.for_bus_sync(
+                BusType.SESSION,
+                DBusProxyFlags.NONE,
+                null,
+                "org.gnome.Shell",
+                "/org/gnome/Shell",
+                "org.gnome.Shell",
+            );
+            var code = """
+            (function(pid) {
+                let num_moved = 0;
+                const actors = global.get_window_actors();
+                for (let i = 0; i < actors.length; i++) {
+                    const window = actors[i].get_meta_window();
+                    if (window.get_pid() == pid) {
+                        const display = window.get_display();
+                        const [dw, dh] = display.get_size();
+                        const frame = window.get_frame_rect();
+                        const x = (dw - frame.width) / 2;
+                        const y = (dh - frame.height) / 2;
+                        window.move_frame(0, x, y);
+                        num_moved += 1;
+                    }
                 }
-            }
-            return num_moved;
-        })""" + @"(pid)";
-        var result = proxy.call_sync("Eval", code, DBusCallFlags.NO_AUTO_START, 1000);
+                return num_moved;
+            })""" + @"$(getpid())";
+            var result = proxy.call_sync("Eval", code, DBusCallFlags.NO_AUTO_START, 1000);
+
+            // TODO: check if the window was moved and return true
+            // if it was not.
+            return false;
+        });
     }
 }
