@@ -111,14 +111,20 @@ class Popup : Window {
 
     void center_with_gnome() {
         Timeout.add(250, () => {
-            var proxy = new DBusProxy.for_bus_sync(
-                BusType.SESSION,
-                DBusProxyFlags.NONE,
-                null,
-                "org.gnome.Shell",
-                "/org/gnome/Shell",
-                "org.gnome.Shell"
-            );
+            DBusProxy proxy;
+            try {
+                proxy = new DBusProxy.for_bus_sync(
+                    BusType.SESSION,
+                    DBusProxyFlags.NONE,
+                    null,
+                    "org.gnome.Shell",
+                    "/org/gnome/Shell",
+                    "org.gnome.Shell"
+                );
+            } catch (Error e) {
+                print(@"failed to connect to GNOME shell: $(e.message)");
+                return false;
+            }
             var code = """
             (function(pid) {
                 let num_moved = 0;
@@ -136,12 +142,25 @@ class Popup : Window {
                     }
                 }
                 return num_moved;
-            })""" + @"$((int)Posix.getpid())";
-            var result = proxy.call_sync("Eval", code, DBusCallFlags.NO_AUTO_START, 1000);
+            })""" + @"($((int)Posix.getpid()))";
+            var dbus_args = new Variant.tuple({new Variant.string(code)});
+            Variant ret_val;
+            try {
+                ret_val = proxy.call_sync("Eval", dbus_args, DBusCallFlags.NO_AUTO_START, 1000);
+            } catch (Error e) {
+                print(@"failed to connect to GNOME shell: $(e.message)");
+                return false;
+            }
+            bool status = false;
+            string json_out = "";
+            ret_val.get("(bs)", ref status, ref json_out);
 
-            // TODO: check if the window was moved and return true
-            // if it was not.
-            return false;
+            if (status && json_out == "0") {
+                // The window isn't registered yet.
+                return false;
+            }
+
+            return true;
         });
     }
 }
