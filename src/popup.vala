@@ -110,7 +110,7 @@ class Popup : Window {
     }
 
     void center_with_gnome() {
-        Timeout.add(250, () => {
+        Timeout.add(100, () => {
             DBusProxy proxy;
             try {
                 proxy = new DBusProxy.for_bus_sync(
@@ -122,7 +122,7 @@ class Popup : Window {
                     "org.gnome.Shell"
                 );
             } catch (Error e) {
-                print(@"failed to connect to GNOME shell: $(e.message)");
+                print(@"failed to connect to GNOME shell: $(e.message)\n");
                 return false;
             }
             var code = """
@@ -148,7 +148,7 @@ class Popup : Window {
             try {
                 ret_val = proxy.call_sync("Eval", dbus_args, DBusCallFlags.NO_AUTO_START, 1000);
             } catch (Error e) {
-                print(@"failed to connect to GNOME shell: $(e.message)");
+                print(@"failed to evaluate GNOME script: $(e.message)\n");
                 return false;
             }
             bool status = false;
