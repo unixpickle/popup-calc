@@ -10,6 +10,8 @@ class Popup : Window {
     private bool gnome_center;
 
     public Popup(bool gnome_center) {
+        this.get_style_context().add_class("main-window");
+
         this.gnome_center = gnome_center;
 
         var container = new Box(Orientation.VERTICAL, 0);
@@ -80,8 +82,11 @@ class Popup : Window {
         var css = new CssProvider();
         try {
             var data = """
+                .main-window {
+                    background-color: #f0f0f0;
+                }
                 GtkEntry, entry {
-                    border: none; font-size: 30px; padding: 15px 10px; box-shadow: none;
+                    border: none; font-size: 30px; padding: 15px 10px; box-shadow: none; background-color: white;
                 }
                 GtkLabel, label {
                     padding: 10px 10px 10px 10px; font-size: 20px; background: #f0f0f0;
